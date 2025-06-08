@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>地表水自动监测技术规范 (HJ 915-2017) 交互式思维导图 (Gemini版)</title>
+    <title>地表水自动监测技术规范 (HJ 915-2017) 交互式思维导图 (Gemini版)</title> 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,7 +13,6 @@
             font-family: 'Noto Sans SC', sans-serif;
             background-color: #f9fafb;
         }
-
         .tree-container {
             padding: 2rem;
             max-width: 1200px;
@@ -22,161 +21,84 @@
             border-radius: 1rem;
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
-
-        .tree ul {
-            position: relative;
-            padding-left: 30px;
-            list-style: none;
-        }
-
-        .tree li {
-            position: relative;
-            padding: 4px 0 4px 25px;
-        }
-
-        .tree ul::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 1px;
-            height: 100%;
-            background-color: #d1d5db;
-        }
-        
-        .tree li::before {
-            content: '';
-            position: absolute;
-            top: 15px;
-            left: 0;
-            width: 25px;
-            height: 1px;
-            background-color: #d1d5db;
-        }
-        
-        .tree li::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 1px;
-            height: 100%;
-            background-color: #d1d5db;
-        }
-
-        .tree li:last-child::after {
-            height: 15px;
-        }
-        
-        .tree .node {
-            display: inline-flex;
-            align-items: center;
-            padding: 6px 12px;
-            border-radius: 8px;
-            background-color: #f3f4f6;
-            color: #374151;
-            transition: all 0.2s ease;
-            min-width: 100px;
-            cursor: pointer;
-            border: 1px solid #e5e7eb;
-        }
-        
-        .tree .gemini-trigger, .tree .simulation-trigger {
-            margin-left: 8px;
-            font-size: 1.1rem;
-            opacity: 0.6;
-            transition: all 0.2s ease;
-        }
-        .tree .node:hover .gemini-trigger, .tree .node:hover .simulation-trigger {
-            opacity: 1;
-            transform: scale(1.2);
-        }
-
-        .tree li.has-children > .node {
-            cursor: pointer;
-            font-weight: 500;
-            background-color: #e0e7ff;
-            color: #3730a3;
-        }
-        
-        .tree li.has-children > .node:hover {
-             background-color: #c7d2fe;
-             transform: translateY(-2px);
-             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
-
-        .tree li.root > .node {
-            background-color: #312e81;
-            color: white;
-            font-weight: 700;
-            font-size: 1.25rem;
-        }
-
-        .tree li.collapsed > ul {
-            display: none;
-        }
-
-        .tree li.has-children > .node > .toggle-icon {
-            content: '−';
-            display: inline-block;
-            margin-right: 8px;
-            font-weight: bold;
-        }
-
-        .tree li.has-children.collapsed > .node > .toggle-icon {
-            content: '+';
-        }
-        
-        .controls {
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        .control-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid #d1d5db;
-            background-color: #ffffff;
-            color: #374151;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        
-        .control-btn:hover {
-            background-color: #f3f4f6;
-        }
-        
-        /* Modal Styles */
-        .modal-content {
-            white-space: pre-wrap;
-            line-height: 1.7;
-        }
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3b82f6;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
+        .tree ul { position: relative; padding-left: 30px; list-style: none; }
+        .tree li { position: relative; padding: 4px 0 4px 25px; }
+        .tree ul::before { content: ''; position: absolute; top: 0; left: 0; width: 1px; height: 100%; background-color: #d1d5db; }
+        .tree li::before { content: ''; position: absolute; top: 15px; left: 0; width: 25px; height: 1px; background-color: #d1d5db; }
+        .tree li::after { content: ''; position: absolute; top: 0; left: 0; width: 1px; height: 100%; background-color: #d1d5db; }
+        .tree li:last-child::after { height: 15px; }
+        .tree .node { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 8px; background-color: #f3f4f6; color: #374151; transition: all 0.2s ease; min-width: 100px; cursor: pointer; border: 1px solid #e5e7eb; }
+        .tree .ai-trigger, .tree .simulation-trigger { margin-left: 8px; font-size: 1.1rem; opacity: 0.6; transition: all 0.2s ease; }
+        .tree .node:hover .ai-trigger, .tree .node:hover .simulation-trigger { opacity: 1; transform: scale(1.2); }
+        .tree li.has-children > .node { cursor: pointer; font-weight: 500; background-color: #e0e7ff; color: #3730a3; }
+        .tree li.has-children > .node:hover { background-color: #c7d2fe; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+        .tree li.root > .node { background-color: #312e81; color: white; font-weight: 700; font-size: 1.25rem; }
+        .tree li.collapsed > ul { display: none; }
+        .tree li.has-children > .node > .toggle-icon { content: '−'; display: inline-block; margin-right: 8px; font-weight: bold; }
+        .tree li.has-children.collapsed > .node > .toggle-icon { content: '+'; }
+        .controls { margin-bottom: 1.5rem; text-align: center; }
+        .control-btn { padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid #d1d5db; background-color: #ffffff; color: #374151; font-weight: 500; cursor: pointer; transition: background-color 0.2s; margin-top: 0.5rem; }
+        .control-btn:hover { background-color: #f3f4f6; }
+        .modal-content { white-space: pre-wrap; line-height: 1.7; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .choice-button { display: block; width: 100%; text-align: left; padding: 0.75rem; margin-bottom: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; background-color: #fff; cursor: pointer; }
+        .choice-button:hover { background-color: #f9fafb; }
+        .choice-button.correct { background-color: #d1fae5; border-color: #059669; color: #065f46; }
+        .choice-button.incorrect { background-color: #fee2e2; border-color: #dc2626; color: #991b1b; }
+        .choice-button:disabled { opacity: 0.7; cursor: not-allowed; }
     </style>
 </head>
 <body>
-
     <div class="tree-container">
+        <div id="apiKeySetup" class="p-4 mb-6 bg-indigo-50 border border-indigo-200 rounded-lg shadow-sm max-w-2xl mx-auto">
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">选择AI模型 (Select AI Model):</label>
+                <div class="flex items-center space-x-4">
+                    <div>
+                        <input type="radio" id="modelGemini" name="aiModel" value="gemini" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" checked>
+                        <label for="modelGemini" class="ml-2 block text-sm text-gray-900">Gemini</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="modelDeepseek" name="aiModel" value="deepseek" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
+                        <label for="modelDeepseek" class="ml-2 block text-sm text-gray-900">DeepSeek</label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="geminiApiKeySection" class="mt-4 p-3 bg-white border border-gray-200 rounded-md">
+                <label for="geminiApiKeyInput" class="block text-xs font-medium text-indigo-700 mb-1">Gemini API Key:</label>
+                <div class="flex items-center space-x-2">
+                    <input type="password" id="geminiApiKeyInput" class="flex-grow p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="请输入 Gemini API Key">
+                    <button id="saveGeminiApiKeyButton" class="px-3 py-1.5 bg-indigo-500 text-white text-xs rounded-md hover:bg-indigo-600">保存Gemini密钥</button>
+                    <button id="clearGeminiApiKeyButton" class="px-3 py-1.5 bg-red-500 text-white text-xs rounded-md hover:bg-red-600">清除Gemini密钥</button>
+                </div>
+                <p id="geminiApiKeyMessage" class="text-xs text-gray-500 mt-1"></p>
+            </div>
+
+            <div id="deepseekApiKeySection" class="mt-3 p-3 bg-white border border-gray-200 rounded-md">
+                <label for="deepseekApiKeyInput" class="block text-xs font-medium text-teal-700 mb-1">DeepSeek API Key:</label>
+                <div class="flex items-center space-x-2">
+                    <input type="password" id="deepseekApiKeyInput" class="flex-grow p-2 border border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 sm:text-sm" placeholder="请输入 DeepSeek API Key">
+                    <button id="saveDeepseekApiKeyButton" class="px-3 py-1.5 bg-teal-500 text-white text-xs rounded-md hover:bg-teal-600">保存DeepSeek密钥</button>
+                    <button id="clearDeepseekApiKeyButton" class="px-3 py-1.5 bg-red-500 text-white text-xs rounded-md hover:bg-red-600">清除DeepSeek密钥</button>
+                </div>
+                <p id="deepseekApiKeyMessage" class="text-xs text-gray-500 mt-1"></p>
+            </div>
+             <p class="text-xs text-gray-500 mt-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 1 1 0 000-2zM6 8a1 1 0 11-2 0 1 1 0 012 0zm1 1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" />
+                </svg>
+                API密钥将安全地存储在您的浏览器本地存储中，仅用于与所选AI模型API通信。
+            </p>
+        </div>
+
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">地表水自动监测技术规范</h1>
-        <p class="text-lg text-center text-gray-500 mb-8">(HJ 915-2017) 交互式思维导图 - Gemini 增强版</p>
+        <p id="pageSubtitle" class="text-lg text-center text-gray-500 mb-8">(HJ 915-2017) 交互式思维导图 - Gemini 增强版</p>
         
-        <!-- Gemini Search Bar -->
         <div class="mb-8 max-w-2xl mx-auto">
-            <form id="geminiSearchForm" class="flex items-center gap-2 p-2 border-2 border-indigo-200 rounded-full shadow-lg focus-within:border-indigo-500 transition-all">
-                <input type="search" id="geminiSearchInput" placeholder="✨ 就规范内容提问，让Gemini为您解答..." class="w-full px-4 py-2 text-gray-700 bg-transparent focus:outline-none">
+            <form id="aiSearchForm" class="flex items-center gap-2 p-2 border-2 border-indigo-200 rounded-full shadow-lg focus-within:border-indigo-500 transition-all">
+                <input type="search" id="aiSearchInput" placeholder="✨ 就规范内容提问，让Gemini为您解答..." class="w-full px-4 py-2 text-gray-700 bg-transparent focus:outline-none">
                 <button type="submit" class="bg-indigo-600 text-white rounded-full p-2.5 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                         <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
@@ -190,59 +112,208 @@
             <button id="collapseAll" class="control-btn">全部折叠</button>
         </div>
 
-        <ul class="tree">
-            <!-- Mindmap structure will be generated by JS -->
-        </ul>
+        <ul class="tree"></ul>
     </div>
 
-    <!-- Gemini Modal -->
-    <div id="geminiModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center hidden z-50">
+    <div id="aiModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center hidden z-50">
         <div class="relative mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-2xl bg-white">
             <h3 id="modalTitle" class="text-xl font-bold text-gray-800 mb-4"></h3>
-            <div id="modalContent" class="modal-content text-gray-700 max-h-[60vh] overflow-y-auto pr-2">
-                <!-- Gemini response will be injected here -->
-            </div>
-            <div id="modalActions" class="mt-4 text-right">
-                 <!-- Action buttons will be injected here -->
-            </div>
+            <div id="modalContent" class="modal-content text-gray-700 max-h-[60vh] overflow-y-auto pr-2"></div>
+            <div id="modalActions" class="mt-4 text-right flex flex-wrap justify-end gap-2"></div>
             <button id="closeModal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl font-bold">&times;</button>
         </div>
     </div>
 
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            let selectedAiModel = 'gemini'; 
+            let geminiApiKey = null;
+            let deepseekApiKey = null;
+
+            // DOM Elements for API Management
+            const modelGeminiRadio = document.getElementById('modelGemini');
+            const modelDeepseekRadio = document.getElementById('modelDeepseek');
             
-            const mindmapData = {
+            const geminiApiKeyInput = document.getElementById('geminiApiKeyInput');
+            const saveGeminiApiKeyButton = document.getElementById('saveGeminiApiKeyButton');
+            const clearGeminiApiKeyButton = document.getElementById('clearGeminiApiKeyButton');
+            const geminiApiKeyMessage = document.getElementById('geminiApiKeyMessage');
+            
+            const deepseekApiKeyInput = document.getElementById('deepseekApiKeyInput');
+            const saveDeepseekApiKeyButton = document.getElementById('saveDeepseekApiKeyButton');
+            const clearDeepseekApiKeyButton = document.getElementById('clearDeepseekApiKeyButton');
+            const deepseekApiKeyMessage = document.getElementById('deepseekApiKeyMessage');
+
+            const pageTitleElement = document.querySelector('title');
+            const pageSubtitleElement = document.getElementById('pageSubtitle');
+            const aiSearchInputElement = document.getElementById('aiSearchInput');
+
+
+            function updateDynamicUIText() {
+                if (selectedAiModel === 'gemini') {
+                    pageTitleElement.textContent = '地表水自动监测技术规范 (HJ 915-2017) 交互式思维导图 (Gemini版)';
+                    pageSubtitleElement.textContent = '(HJ 915-2017) 交互式思维导图 - Gemini 增强版';
+                    aiSearchInputElement.placeholder = '✨ 就规范内容提问，让Gemini为您解答...';
+                } else if (selectedAiModel === 'deepseek') {
+                    pageTitleElement.textContent = '地表水自动监测技术规范 (HJ 915-2017) 交互式思维导图 (DeepSeek版)';
+                    pageSubtitleElement.textContent = '(HJ 915-2017) 交互式思维导图 - DeepSeek 增强版';
+                    aiSearchInputElement.placeholder = '✨ 就规范内容提问，让DeepSeek为您解答...';
+                }
+            }
+
+            function loadApiKeysAndModelSelection() {
+                // Load selected model
+                const savedModel = localStorage.getItem('selectedAiModel');
+                if (savedModel) {
+                    selectedAiModel = savedModel;
+                    if (selectedAiModel === 'gemini' && modelGeminiRadio) modelGeminiRadio.checked = true;
+                    else if (selectedAiModel === 'deepseek' && modelDeepseekRadio) modelDeepseekRadio.checked = true;
+                }
+                updateDynamicUIText(); // Update UI text based on loaded or default model
+
+                // Load Gemini Key
+                geminiApiKey = localStorage.getItem('geminiApiKey');
+                if (geminiApiKey) {
+                    if (geminiApiKeyMessage) geminiApiKeyMessage.textContent = 'Gemini API Key: 已加载。';
+                } else {
+                    if (geminiApiKeyMessage) geminiApiKeyMessage.textContent = 'Gemini API Key: 未设置。';
+                }
+                if (geminiApiKeyInput) geminiApiKeyInput.value = '';
+
+                // Load DeepSeek Key
+                deepseekApiKey = localStorage.getItem('deepseekApiKey');
+                if (deepseekApiKey) {
+                    if (deepseekApiKeyMessage) deepseekApiKeyMessage.textContent = 'DeepSeek API Key: 已加载。';
+                } else {
+                    if (deepseekApiKeyMessage) deepseekApiKeyMessage.textContent = 'DeepSeek API Key: 未设置。';
+                }
+                if (deepseekApiKeyInput) deepseekApiKeyInput.value = '';
+            }
+            
+            // Model Selection Logic
+            [modelGeminiRadio, modelDeepseekRadio].forEach(radio => {
+                if(radio) radio.addEventListener('change', (event) => {
+                    if (event.target.checked) {
+                        selectedAiModel = event.target.value;
+                        localStorage.setItem('selectedAiModel', selectedAiModel);
+                        updateDynamicUIText();
+                        // Optionally, clear API status messages for the other model or update emphasis
+                        geminiApiKeyMessage.textContent = geminiApiKey ? 'Gemini API Key: 已加载。' : 'Gemini API Key: 未设置。';
+                        deepseekApiKeyMessage.textContent = deepseekApiKey ? 'DeepSeek API Key: 已加载。' : 'DeepSeek API Key: 未设置。';
+                    }
+                });
+            });
+
+            // Gemini API Key Management
+            if(saveGeminiApiKeyButton) saveGeminiApiKeyButton.addEventListener('click', () => {
+                const key = geminiApiKeyInput.value.trim();
+                if (key) {
+                    localStorage.setItem('geminiApiKey', key);
+                    geminiApiKey = key;
+                    geminiApiKeyMessage.textContent = 'Gemini API Key 已保存!';
+                    geminiApiKeyMessage.className = 'text-xs text-green-600 mt-1';
+                } else {
+                    geminiApiKeyMessage.textContent = '请输入有效的Gemini API Key。';
+                    geminiApiKeyMessage.className = 'text-xs text-red-600 mt-1';
+                }
+                setTimeout(() => { 
+                    geminiApiKeyMessage.textContent = geminiApiKey ? 'Gemini API Key: 已加载。' : 'Gemini API Key: 未设置。';
+                    geminiApiKeyMessage.className = 'text-xs text-gray-500 mt-1'; // Reset class
+                }, 3000);
+            });
+
+            if(clearGeminiApiKeyButton) clearGeminiApiKeyButton.addEventListener('click', () => {
+                localStorage.removeItem('geminiApiKey');
+                geminiApiKey = null;
+                geminiApiKeyInput.value = '';
+                geminiApiKeyMessage.textContent = 'Gemini API Key: 未设置。';
+                geminiApiKeyMessage.className = 'text-xs text-orange-600 mt-1';
+            });
+
+            // DeepSeek API Key Management
+            if(saveDeepseekApiKeyButton) saveDeepseekApiKeyButton.addEventListener('click', () => {
+                const key = deepseekApiKeyInput.value.trim();
+                if (key) {
+                    localStorage.setItem('deepseekApiKey', key);
+                    deepseekApiKey = key;
+                    deepseekApiKeyMessage.textContent = 'DeepSeek API Key 已保存!';
+                    deepseekApiKeyMessage.className = 'text-xs text-green-600 mt-1';
+                } else {
+                    deepseekApiKeyMessage.textContent = '请输入有效的DeepSeek API Key。';
+                    deepseekApiKeyMessage.className = 'text-xs text-red-600 mt-1';
+                }
+                setTimeout(() => { 
+                    deepseekApiKeyMessage.textContent = deepseekApiKey ? 'DeepSeek API Key: 已加载。' : 'DeepSeek API Key: 未设置。';
+                    deepseekApiKeyMessage.className = 'text-xs text-gray-500 mt-1'; // Reset class
+                }, 3000);
+            });
+
+            if(clearDeepseekApiKeyButton) clearDeepseekApiKeyButton.addEventListener('click', () => {
+                localStorage.removeItem('deepseekApiKey');
+                deepseekApiKey = null;
+                deepseekApiKeyInput.value = '';
+                deepseekApiKeyMessage.textContent = 'DeepSeek API Key: 未设置。';
+                deepseekApiKeyMessage.className = 'text-xs text-orange-600 mt-1';
+            });
+            
+            loadApiKeysAndModelSelection(); // Initial load
+
+            const mindmapData = { /* ... Mindmap data remains the same as previous version ... */ 
                 text: "地表水自动监测技术规范 (HJ 915-2017)",
                 isRoot: true,
                 children: [
                     { text: "一、 引言与范围", children: [{ text: "目的" }, { text: "法律依据" }, { text: "适用范围" }, { text: "规范性引用" }] },
-                    { text: "二、 核心术语定义", children: [{ text: "地表水水质自动监测" }, { text: "水站" }, { text: "数据平台" }, { text: "自动监测系统" }, { text: "常规五参数" }] },
-                    { text: "三、 系统建设", children: [
-                        { text: "总体要求" },
-                        { text: "站址选择", children: [{ text: "原则：可行性、代表性、长期性、安全性、经济性" }, { text: "基础条件：交通、电力(≥15kW)、水源、通讯等" }, { text: "代表性：远离污染源, 避免回水区" }] },
-                        { text: "站房建设", children: [{ text: "形式：固定式、简易式、浮标站等" }, { text: "安全要求：防雷、抗震、防洪、防盗等" }, { text: "固定站房配置：仪器间(≥60m²)、质控间(≥30m²)" }, { text: "环境控制：温度18~28℃，湿度<60%" }]},
-                        { text: "水站各单元建设", children: [{ text: "采配水单元 (采水、预处理、配水)" }, { text: "控制单元 (PLC, MTBF≥10000h)" }, { text: "检测单元 (仪器性能需符合附录A.2)" }, { text: "数据采集与传输单元 (本地储存≥1年数据)" }] },
-                        { text: "数据平台建设", children: [{ text: "核心功能：数据采集、远程反控、分析管理、报警" }, { text: "技术要求：安全传输、可扩展、自动识别无效数据" }] },
-                    ]},
+                    { 
+                        text: "二、 核心术语定义", 
+                        children: [
+                            { text: "地表水水质自动监测" }, 
+                            { text: "水站" }, 
+                            { text: "数据平台" }, 
+                            { text: "自动监测系统" }, 
+                            { 
+                                text: "常规五参数",
+                                quiz: [
+                                    { question: "地表水自动监测中的“常规五参数”通常不包括以下哪一项？", choices: ["水温", "pH值", "溶解氧", "总氮"], correctAnswer: "总氮" },
+                                    { question: "测量pH值的意义在于反映水体的什么特性？", choices: ["混浊程度", "酸碱度", "含氧量", "导电能力"], correctAnswer: "酸碱度" }
+                                ]
+                            }
+                        ] 
+                    },
+                    { 
+                        text: "三、 系统建设", 
+                        children: [
+                            { text: "总体要求" },
+                            { text: "站址选择", children: [{ text: "原则：可行性、代表性、长期性、安全性、经济性" }, { text: "基础条件：交通、电力(≥15kW)、水源、通讯等" }, { text: "代表性：远离污染源, 避免回水区" }] },
+                            { 
+                                text: "站房建设", 
+                                children: [
+                                    { text: "形式：固定式、简易式、浮标站等" }, 
+                                    { text: "安全要求：防雷、抗震、防洪、防盗等" }, 
+                                    { text: "固定站房配置：仪器间(≥60m²)、质控间(≥30m²)" }, 
+                                    { 
+                                        text: "环境控制", 
+                                        quiz: [
+                                            { question: "水站站房环境控制中，对温度的一般要求是多少摄氏度？", choices: ["0~10℃", "10~18℃", "18~28℃", "28~35℃"], correctAnswer: "18~28℃" },
+                                            { question: "水站站房环境控制中，对湿度的一般要求是什么？", choices: ["<40%", "<60%", ">60%", ">80%"], correctAnswer: "<60%" }
+                                        ]
+                                    }
+                                ]
+                            },
+                            { text: "水站各单元建设", children: [{ text: "采配水单元 (采水、预处理、配水)" }, { text: "控制单元 (PLC, MTBF≥10000h)" }, { text: "检测单元 (仪器性能需符合附录A.2)" }, { text: "数据采集与传输单元 (本地储存≥1年数据)" }] },
+                            { text: "数据平台建设", children: [{ text: "核心功能：数据采集、远程反控、分析管理、报警" }, { text: "技术要求：安全传输、可扩展、自动识别无效数据" }] },
+                        ]
+                    },
                     { text: "四、 系统验收", special: true, children: [{ text: "总体要求" }, { text: "验收程序" }, { text: "基本条件 (至少连续稳定运行30天)" }, { text: "详细内容 (站房、仪器、数据平台)" }] },
                     { text: "五、 运行维护 (O&M)", special: true, children: [{ text: "总体要求" }, { text: "例行维护 (巡检频次 ≥ 每周一次)" }, { text: "保养检修 (每年至少1次)" }, { text: "故障检修", simulatable: true }, { text: "数据平台管理" }, { text: "记录要求" }] },
-                    { text: "六、 质量保证与质量控制 (QA/QC)", children: [
-                        { text: "量值传递要求 (使用有证标准样品)" },
-                        { text: "仪器性能核查", children: [{ text: "内容：准确度、精密度、检出限等" }, { text: "频率：大部分指标≥每半年一次，校准≥每月一次" }, { text: "方法与公式" }, { text: "实际水样比对" }] },
-                    ]},
-                    { text: "七、 数据采集与有效性", simulatable: true, children: [{ text: "采集频率 (一般4小时/次)" }, { text: "数据有效性 (存疑数据24h内甄别)" }, { text: "数据有效率 (>90%)" }] },
+                    { text: "六、 质量保证与质量控制 (QA/QC)", children: [ { text: "量值传递要求 (使用有证标准样品)" }, { text: "仪器性能核查", children: [{ text: "内容：准确度、精密度、检出限等" }, { text: "频率：大部分指标≥每半年一次，校准≥每月一次" }, { text: "方法与公式" }, { text: "实际水样比对" }] } ] },
+                    { text: "七、 数据采集与有效性", simulatable: true, children: [ { text: "采集频率", quiz: [ { question: "《HJ 915-2017》规范中，地表水自动监测系统一般的数据采集频率是多少？", choices: ["每15分钟一次", "每小时一次", "每2小时一次", "每4小时一次"], correctAnswer: "每4小时一次" } ] }, { text: "数据有效性 (存疑数据24h内甄别)" }, { text: "数据有效率 (>90%)" } ] },
                     { text: "八、 保障制度", children: [{ text: "运行管理办法" }, { text: "岗位职责" }, { text: "质量管理保障制度" }, { text: "仪器操作规程 (SOPs)" }, { text: "培训及考核制度" }, { text: "档案管理制度" }] },
-                    { text: "九、 监测项目与仪器性能", children: [
-                        { text: "监测项目", children: [{ text: "河流必测：常规五参数、高锰酸盐指数、氨氮、总磷、总氮" }, { text: "湖库必测：增加叶绿素a" }, { text: "选测项目" }] },
-                        { text: "仪器性能要求 (附录A.2)", children: [{ text: "规范性附录，具强制性" }, { text: "规定具体技术指标 (检出限、精密度等)" }, { text: "提供量化基准" }] },
-                    ]}
+                    { text: "九、 监测项目与仪器性能", children: [ { text: "监测项目", children: [{ text: "河流必测：常规五参数、高锰酸盐指数、氨氮、总磷、总氮" }, { text: "湖库必测：增加叶绿素a" }, { text: "选测项目" }] }, { text: "仪器性能要求 (附录A.2)", children: [{ text: "规范性附录，具强制性" }, { text: "规定具体技术指标 (检出限、精密度等)" }, { text: "提供量化基准" }] } ] }
                 ]
             };
 
             const treeContainer = document.querySelector('.tree');
-            treeContainer.innerHTML = ''; // Clear static content
+            treeContainer.innerHTML = ''; 
             treeContainer.appendChild(createTree(mindmapData));
 
             function createTree(nodeData) {
@@ -250,18 +321,13 @@
                 const span = document.createElement('span');
                 span.className = 'node';
                 span.textContent = nodeData.text;
-
-                if (nodeData.isRoot) {
-                    li.classList.add('root');
-                }
-
+                if (nodeData.isRoot) li.classList.add('root');
                 if (nodeData.children && nodeData.children.length > 0) {
                     li.classList.add('has-children');
                     const toggleIcon = document.createElement('span');
                     toggleIcon.className = 'toggle-icon';
                     toggleIcon.textContent = '−';
                     span.prepend(toggleIcon);
-
                     const ul = document.createElement('ul');
                     nodeData.children.forEach(child => ul.appendChild(createTree(child)));
                     li.appendChild(span);
@@ -269,18 +335,16 @@
                 } else {
                     li.appendChild(span);
                 }
-                
                 if (!nodeData.isRoot) {
-                    const geminiTrigger = document.createElement('span');
-                    geminiTrigger.className = 'gemini-trigger';
-                    geminiTrigger.title = '✨ 智能解读';
-                    geminiTrigger.innerHTML = '✨';
-                    span.appendChild(geminiTrigger);
-                    geminiTrigger.addEventListener('click', (e) => {
+                    const aiTrigger = document.createElement('span');
+                    aiTrigger.className = 'ai-trigger';
+                    aiTrigger.title = '✨ 智能解读';
+                    aiTrigger.innerHTML = '✨';
+                    span.appendChild(aiTrigger);
+                    aiTrigger.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        openGeminiModalForNode(nodeData.text, nodeData.special);
+                        openAIModalForNode(nodeData, nodeData.text, nodeData.special);
                     });
-                    
                     if (nodeData.simulatable) {
                         const simTrigger = document.createElement('span');
                         simTrigger.className = 'simulation-trigger';
@@ -297,26 +361,28 @@
             }
 
             const tree = document.querySelector('.tree');
-            tree.addEventListener('click', function (event) {
+            if(tree) tree.addEventListener('click', function (event) { /* ... tree click logic ... */ 
                 const target = event.target;
                 if (target.matches('.node, .toggle-icon')) {
                     const parentLi = target.closest('li.has-children');
                     if (parentLi) {
                         parentLi.classList.toggle('collapsed');
                         const toggleIcon = parentLi.querySelector('.toggle-icon');
-                        toggleIcon.textContent = parentLi.classList.contains('collapsed') ? '+' : '−';
+                        if(toggleIcon) toggleIcon.textContent = parentLi.classList.contains('collapsed') ? '+' : '−';
                     }
                 }
             });
-
-            document.getElementById('expandAll').addEventListener('click', function() {
-                tree.querySelectorAll('li.has-children').forEach(node => {
+            
+            const expandAllBtn = document.getElementById('expandAll');
+            if(expandAllBtn) expandAllBtn.addEventListener('click', function() { /* ... expand all logic ... */ 
+                 tree.querySelectorAll('li.has-children').forEach(node => {
                     node.classList.remove('collapsed');
                     if(node.querySelector('.toggle-icon')) node.querySelector('.toggle-icon').textContent = '−';
                 });
             });
 
-            document.getElementById('collapseAll').addEventListener('click', function() {
+            const collapseAllBtn = document.getElementById('collapseAll');
+            if(collapseAllBtn) collapseAllBtn.addEventListener('click', function() { /* ... collapse all logic ... */ 
                 tree.querySelectorAll('li.has-children').forEach(node => {
                     if (!node.classList.contains('root')) {
                         node.classList.add('collapsed');
@@ -324,45 +390,86 @@
                     }
                 });
             });
+            
+            if(collapseAllBtn) collapseAllBtn.click();
+            const rootNode = document.querySelector('.tree > li.root');
+            if(rootNode) rootNode.classList.remove('collapsed');
 
-            document.getElementById('collapseAll').click();
-            document.querySelector('.tree > li.root').classList.remove('collapsed');
 
-            const modal = document.getElementById('geminiModal');
+            const modal = document.getElementById('aiModal');
             const modalTitle = document.getElementById('modalTitle');
             const modalContent = document.getElementById('modalContent');
             const modalActions = document.getElementById('modalActions');
             const closeModalBtn = document.getElementById('closeModal');
 
-            closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
-            modal.addEventListener('click', (e) => {
+            if(closeModalBtn) closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
+            if(modal) modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
                     modal.classList.add('hidden');
                 }
             });
             
-            async function callGeminiAPI(prompt) {
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+            async function callAIModel(prompt) {
+                const modelToUse = selectedAiModel;
+                let apiKeyToUse = null;
+                let apiUrl = '';
+                let payload = {};
+                let headers = {};
+                let modelNameForError = '';
+
+                if (modelToUse === 'gemini') {
+                    apiKeyToUse = geminiApiKey;
+                    modelNameForError = 'Gemini';
+                    if (!apiKeyToUse) {
+                        modalTitle.textContent = "Gemini API Key 未设置";
+                        modalContent.innerHTML = '<p class="text-red-500 font-semibold">错误：Gemini API Key 未设置。</p><p>请在页面顶部的Gemini API Key输入框中设置您的密钥，然后重试。</p>';
+                        if (modalActions) modalActions.innerHTML = '';
+                        if (modal && modal.classList.contains('hidden')) modal.classList.remove('hidden');
+                        return Promise.reject("Gemini API Key未设置");
+                    }
+                    apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKeyToUse}`;
+                    payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+                    headers = { 'Content-Type': 'application/json' };
+                } else if (modelToUse === 'deepseek') {
+                    apiKeyToUse = deepseekApiKey;
+                    modelNameForError = 'DeepSeek';
+                    if (!apiKeyToUse) {
+                        modalTitle.textContent = "DeepSeek API Key 未设置";
+                        modalContent.innerHTML = '<p class="text-red-500 font-semibold">错误：DeepSeek API Key 未设置。</p><p>请在页面顶部的DeepSeek API Key输入框中设置您的密钥，然后重试。</p>';
+                        if (modalActions) modalActions.innerHTML = '';
+                        if (modal && modal.classList.contains('hidden')) modal.classList.remove('hidden');
+                        return Promise.reject("DeepSeek API Key未设置");
+                    }
+                    apiUrl = "https://api.deepseek.com/v1/chat/completions";
+                    payload = { model: "deepseek-chat", messages: [{ role: "user", content: prompt }] };
+                    headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKeyToUse}` };
+                } else {
+                    modalTitle.textContent = "未选择AI模型";
+                    modalContent.innerHTML = '<p class="text-red-500 font-semibold">错误：未选择AI模型。</p><p>请在页面顶部选择一个AI模型，然后重试。</p>';
+                    if (modalActions) modalActions.innerHTML = '';
+                    if (modal && modal.classList.contains('hidden')) modal.classList.remove('hidden');
+                    return Promise.reject("未选择AI模型");
+                }
 
                 try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const response = await fetch(apiUrl, { method: 'POST', headers: headers, body: JSON.stringify(payload) });
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status} ${await response.text()}`);
                     const result = await response.json();
-                    if (result.candidates && result.candidates[0].content.parts.length > 0) {
-                        return result.candidates[0].content.parts[0].text;
-                    } else {
-                        return "抱歉，无法获取AI响应。请稍后再试。";
+
+                    if (modelToUse === 'gemini') {
+                        if (result.candidates && result.candidates[0] && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                            return result.candidates[0].content.parts[0].text;
+                        } else { throw new Error(`${modelNameForError} API响应格式不正确。`); }
+                    } else if (modelToUse === 'deepseek') {
+                         if (result.choices && result.choices[0] && result.choices[0].message && result.choices[0].message.content) {
+                            return result.choices[0].message.content;
+                        } else { throw new Error(`${modelNameForError} API响应格式不正确。`); }
                     }
-                } catch(error) {
-                    console.error("Gemini API call failed:", error);
-                    return "调用AI服务失败，请检查网络连接或稍后再试。";
+                } catch (error) {
+                    console.error(`${modelNameForError} API call failed:`, error);
+                    modalTitle.textContent = `${modelNameForError} AI 调用失败`;
+                    modalContent.innerHTML = `<p class="text-red-500">调用${modelNameForError} AI服务失败。</p><p class="text-sm mt-2">错误详情: ${error.message}</p><p class="text-sm mt-2">请检查您的网络连接、API密钥是否正确且有权访问${modelNameForError} API，或稍后再试。</p>`;
+                    return Promise.reject(error.message);
                 }
             }
 
@@ -371,61 +478,151 @@
                 modalTitle.textContent = title;
                 modalContent.innerHTML = '<div class="flex justify-center items-center h-48"><div class="spinner"></div></div>';
                 modalActions.innerHTML = '';
-                const result = await contentPromise;
-                modalContent.textContent = result;
-            }
-
-            async function openGeminiModalForNode(nodeText, isSpecial) {
-                const prompt = `请根据《地表水自动监测技术规范 HJ 915-2017》的内容，用通俗易懂的语言详细解释'${nodeText}'这一节的核心内容和重要性。`;
-                openModalWithContent(`关于“${nodeText}”的智能解读`, callGeminiAPI(prompt));
-
-                if (isSpecial) {
-                    const interpretationPromise = callGeminiAPI(prompt);
-                    const result = await interpretationPromise;
-                    modalContent.textContent = result;
-
-                    const checklistBtn = document.createElement('button');
-                    checklistBtn.className = 'control-btn bg-blue-500 text-white hover:bg-blue-600';
-                    checklistBtn.innerHTML = '✨ 生成检查清单';
-                    checklistBtn.onclick = async () => {
-                         const checklistPrompt = `根据《地表水自动监测技术规范 HJ 915-2017》中关于'${nodeText}'的全部要求，生成一份详细、可操作的现场检查清单，请使用Markdown格式。`;
-                         openModalWithContent(`“${nodeText}”检查清单`, callGeminiAPI(checklistPrompt));
-                    };
-                    modalActions.appendChild(checklistBtn);
+                try {
+                    const result = await contentPromise;
+                    modalContent.textContent = result; 
+                } catch (error) {
+                    // Error display is now primarily handled within callAIModel
+                    // This catch is a fallback or for non-API related promise rejections
+                    if (!modalContent.textContent.includes("错误：") && !modalContent.textContent.includes("调用失败")) {
+                         modalContent.textContent = "加载内容时发生错误。";
+                    }
+                     console.log("Error in openModalWithContent:", error); // Log for debugging
                 }
             }
             
-            async function openSimulationModal(nodeText) {
-                modal.classList.remove('hidden');
-                modalTitle.textContent = `关于“${nodeText}”的场景模拟`;
-                modalContent.innerHTML = '<div class="flex justify-center items-center h-48"><div class="spinner"></div></div>';
-                modalActions.innerHTML = '';
+            let currentQuizDataSession = null; 
+            let currentQuestionIndexSession = 0; 
+            let scoreSession = 0; 
 
-                const scenarioPrompt = `您是一名地表水自动监测站的运维培训专家。请根据《地表水自动监测技术规范 HJ 915-2017》关于'${nodeText}'的要求，设计一个常见的、具体的实践场景问题来挑战用户。请以场景描述和提问的方式呈现，引导用户思考如何应对。`;
-                const scenario = await callGeminiAPI(scenarioPrompt);
-                modalContent.textContent = scenario;
-                
-                const solutionBtn = document.createElement('button');
-                solutionBtn.className = 'control-btn bg-green-500 text-white hover:bg-green-600';
-                solutionBtn.innerHTML = '查看解决方案';
-                solutionBtn.onclick = async () => {
-                    modalContent.innerHTML = '<div class="flex justify-center items-center h-48"><div class="spinner"></div></div>';
-                    const solutionPrompt = `针对以下场景问题：“${scenario}”。请根据《地表水自动监测技术规范 HJ 915-2017》的要求，提供一份标准、详细的解决方案和处理流程。`;
-                    const solution = await callGeminiAPI(solutionPrompt);
-                    modalContent.textContent = solution;
-                    modalActions.innerHTML = ''; // Hide button after showing solution
-                };
-                modalActions.appendChild(solutionBtn);
+            function displayQuiz(quizData) { /* ... displayQuiz and related functions remain the same ... */ 
+                currentQuizDataSession = quizData;
+                currentQuestionIndexSession = 0;
+                scoreSession = 0;
+                modalTitle.textContent = "章节小测验"; 
+                renderCurrentQuestion();
             }
 
-            const searchForm = document.getElementById('geminiSearchForm');
-            const searchInput = document.getElementById('geminiSearchInput');
-            searchForm.addEventListener('submit', async (e) => {
+            function renderCurrentQuestion() { /* ... same ... */ 
+                const modalContentDiv = document.getElementById('modalContent');
+                const modalActionsDiv = document.getElementById('modalActions');
+                modalContentDiv.innerHTML = '';
+                modalActionsDiv.innerHTML = '';
+                if (!currentQuizDataSession || currentQuestionIndexSession >= currentQuizDataSession.length) {
+                    showQuizSummary(); return;
+                }
+                const questionData = currentQuizDataSession[currentQuestionIndexSession];
+                const questionElement = document.createElement('h4');
+                questionElement.className = 'text-lg font-semibold mb-3';
+                questionElement.textContent = `问题 ${currentQuestionIndexSession + 1}/${currentQuizDataSession.length}: ${questionData.question}`;
+                modalContentDiv.appendChild(questionElement);
+                const choicesContainer = document.createElement('div');
+                questionData.choices.forEach(choiceText => {
+                    const choiceButton = document.createElement('button');
+                    choiceButton.textContent = choiceText;
+                    choiceButton.className = 'choice-button';
+                    choiceButton.addEventListener('click', () => handleAnswer(choiceButton, choiceText, questionData));
+                    choicesContainer.appendChild(choiceButton);
+                });
+                modalContentDiv.appendChild(choicesContainer);
+            }
+
+            function handleAnswer(clickedButton, selectedChoice, questionData) { /* ... same ... */
+                const allChoiceButtons = clickedButton.parentElement.querySelectorAll('.choice-button');
+                allChoiceButtons.forEach(btn => btn.disabled = true);
+                if (selectedChoice === questionData.correctAnswer) {
+                    scoreSession++; clickedButton.classList.add('correct');
+                } else {
+                    clickedButton.classList.add('incorrect');
+                    allChoiceButtons.forEach(btn => { if (btn.textContent === questionData.correctAnswer) btn.classList.add('correct'); });
+                }
+                showNavigationButtons();
+            }
+
+            function showNavigationButtons() { /* ... same ... */
+                const modalActionsDiv = document.getElementById('modalActions');
+                modalActionsDiv.innerHTML = ''; 
+                if (currentQuestionIndexSession < currentQuizDataSession.length - 1) {
+                    const nextButton = document.createElement('button');
+                    nextButton.textContent = '下一题';
+                    nextButton.className = 'control-btn bg-indigo-500 text-white hover:bg-indigo-600';
+                    nextButton.addEventListener('click', () => { currentQuestionIndexSession++; renderCurrentQuestion(); });
+                    modalActionsDiv.appendChild(nextButton);
+                } else {
+                    const finishButton = document.createElement('button');
+                    finishButton.textContent = '完成测验';
+                    finishButton.className = 'control-btn bg-green-500 text-white hover:bg-green-600';
+                    finishButton.addEventListener('click', showQuizSummary);
+                    modalActionsDiv.appendChild(finishButton);
+                }
+            }
+            function showQuizSummary() { /* ... same ... */
+                const modalContentDiv = document.getElementById('modalContent');
+                const modalActionsDiv = document.getElementById('modalActions');
+                modalContentDiv.innerHTML = `<h3 class="text-xl font-bold text-center mb-4">测验完成!</h3><p class="text-center text-lg">你答对了 ${scoreSession} / ${currentQuizDataSession.length} 题。</p>`;
+                modalActionsDiv.innerHTML = '';
+                const closeButton = document.createElement('button');
+                closeButton.textContent = '关闭';
+                closeButton.className = 'control-btn';
+                closeButton.onclick = () => { modal.classList.add('hidden'); };
+                modalActionsDiv.appendChild(closeButton);
+            }
+
+            async function openAIModalForNode(nodeData, nodeText, isSpecial) { /* ... uses callAIModel ... */ 
+                const prompt = `请根据《地表水自动监测技术规范 HJ 915-2017》的内容，用通俗易懂的语言详细解释'${nodeText}'这一节的核心内容和重要性。`;
+                try {
+                    await openModalWithContent(`关于“${nodeText}”的智能解读`, callAIModel(prompt));
+                    const modalActionsDiv = document.getElementById('modalActions'); // Ensure it's freshly obtained
+                    // modalActionsDiv.innerHTML = ''; // openModalWithContent clears it.
+
+                    if (isSpecial) {
+                        const checklistBtn = document.createElement('button');
+                        checklistBtn.className = 'control-btn bg-blue-500 text-white hover:bg-blue-600';
+                        checklistBtn.innerHTML = '✨ 生成检查清单';
+                        checklistBtn.onclick = async () => {
+                             const checklistPromptBtn = `根据《地表水自动监测技术规范 HJ 915-2017》中关于'${nodeText}'的全部要求，生成一份详细、可操作的现场检查清单，请使用Markdown格式。`;
+                             openModalWithContent(`“${nodeText}”检查清单`, callAIModel(checklistPromptBtn));
+                        };
+                        modalActionsDiv.appendChild(checklistBtn);
+                    }
+                    if (nodeData.quiz && nodeData.quiz.length > 0) {
+                        const quizButton = document.createElement('button');
+                        quizButton.innerHTML = '📝 开始测验';
+                        quizButton.className = 'control-btn bg-purple-500 text-white hover:bg-purple-600';
+                        quizButton.addEventListener('click', () => displayQuiz(nodeData.quiz));
+                        modalActionsDiv.appendChild(quizButton);
+                    }
+                } catch (error) { console.log("Error handled by callAIModel/openModalWithContent in openAIModalForNode:", error); }
+            }
+            
+            async function openSimulationModal(nodeText) { /* ... uses callAIModel ... */ 
+                const scenarioPrompt = `您是一名地表水自动监测站的运维培训专家。请根据《地表水自动监测技术规范 HJ 915-2017》关于'${nodeText}'的要求，设计一个常见的、具体的实践场景问题来挑战用户。请以场景描述和提问的方式呈现，引导用户思考如何应对。`;
+                try {
+                    await openModalWithContent(`关于“${nodeText}”的场景模拟`, callAIModel(scenarioPrompt).then(scenario => {
+                        if (scenario && !scenario.startsWith("调用") && !scenario.startsWith("错误：")) { // Check if scenario fetch was successful
+                            const modalActionsDiv = document.getElementById('modalActions');
+                            const solutionBtn = document.createElement('button');
+                            solutionBtn.className = 'control-btn bg-green-500 text-white hover:bg-green-600';
+                            solutionBtn.innerHTML = '查看解决方案';
+                            solutionBtn.onclick = async () => {
+                                const solutionPrompt = `针对以下场景问题：“${modalContent.textContent}”。请根据《地表水自动监测技术规范 HJ 915-2017》的要求，提供一份标准、详细的解决方案和处理流程。`;
+                                openModalWithContent(`“${nodeText}”场景解决方案`, callAIModel(solutionPrompt));
+                            };
+                            modalActionsDiv.appendChild(solutionBtn);
+                        } // else: error already displayed by callAIModel
+                        return scenario; 
+                    }));
+                } catch (error) { console.log("Error handled by callAIModel/openModalWithContent in openSimulationModal:", error); }
+            }
+
+            const searchForm = document.getElementById('aiSearchForm'); 
+            const searchInput = document.getElementById('aiSearchInput'); 
+            if(searchForm) searchForm.addEventListener('submit', async (e) => { /* ... uses callAIModel ... */ 
                 e.preventDefault();
                 const query = searchInput.value.trim();
                 if (!query) return;
                 const prompt = `您是一位熟悉《地表水自动监测技术规范 HJ 915-2017》的专家。请根据该规范的详细内容，回答以下问题：“${query}”。请确保您的回答准确、详细，并尽可能引用规范中的关键点。`;
-                openModalWithContent(`关于“${query}”的解答`, callGeminiAPI(prompt));
+                openModalWithContent(`关于“${query}”的解答`, callAIModel(prompt));
                 searchInput.value = '';
             });
         });
