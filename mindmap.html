@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地表水自动监测技术规范 (HJ 915-2017) 交互式思维导图 (Gemini版)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f9fafb;
+        }
+        .tree-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 2rem auto;
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .tree ul { position: relative; padding-left: 30px; list-style: none; }
+        .tree li { position: relative; padding: 4px 0 4px 25px; }
+        .tree ul::before { content: ''; position: absolute; top: 0; left: 0; width: 1px; height: 100%; background-color: #d1d5db; }
+        .tree li::before { content: ''; position: absolute; top: 15px; left: 0; width: 25px; height: 1px; background-color: #d1d5db; }
+        .tree li::after { content: ''; position: absolute; top: 0; left: 0; width: 1px; height: 100%; background-color: #d1d5db; }
+        .tree li:last-child::after { height: 15px; }
+        .tree .node { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 8px; background-color: #f3f4f6; color: #374151; transition: all 0.2s ease; min-width: 100px; cursor: pointer; border: 1px solid #e5e7eb; }
+        .tree .ai-trigger, .tree .simulation-trigger { margin-left: 8px; font-size: 1.1rem; opacity: 0.6; transition: all 0.2s ease; }
+        .tree .node:hover .ai-trigger, .tree .node:hover .simulation-trigger { opacity: 1; transform: scale(1.2); }
+        .tree li.has-children > .node { cursor: pointer; font-weight: 500; background-color: #e0e7ff; color: #3730a3; }
+        .tree li.has-children > .node:hover { background-color: #c7d2fe; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+        .tree li.root > .node { background-color: #312e81; color: white; font-weight: 700; font-size: 1.25rem; }
+        .tree li.collapsed > ul { display: none; }
+        .tree li.has-children > .node > .toggle-icon { content: '−'; display: inline-block; margin-right: 8px; font-weight: bold; }
+        .tree li.has-children.collapsed > .node > .toggle-icon { content: '+'; }
+        .controls { margin-bottom: 1.5rem; text-align: center; }
+        .control-btn { padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid #d1d5db; background-color: #ffffff; color: #374151; font-weight: 500; cursor: pointer; transition: background-color 0.2s; margin-top: 0.5rem; }
+        .control-btn:hover { background-color: #f3f4f6; }
+        .modal-content { white-space: pre-wrap; line-height: 1.7; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .choice-button { display: block; width: 100%; text-align: left; padding: 0.75rem; margin-bottom: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; background-color: #fff; cursor: pointer; }
+        .choice-button:hover { background-color: #f9fafb; }
+        .choice-button.correct { background-color: #d1fae5; border-color: #059669; color: #065f46; }
+        .choice-button.incorrect { background-color: #fee2e2; border-color: #dc2626; color: #991b1b; }
+        .choice-button:disabled { opacity: 0.7; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div class="tree-container">
+        <div id="apiKeySetup" class="p-4 mb-6 bg-indigo-50 border border-indigo-200 rounded-lg shadow-sm max-w-2xl mx-auto">
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">选择AI模型 (Select AI Model):</label>
+                <div class="flex items-center space-x-4">
+                    <div>
+                        <input type="radio" id="modelGemini" name="aiModel" value="gemini" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" checked>
+                        <label for="modelGemini" class="ml-2 block text-sm text-gray-900">Gemini</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="modelDeepseek" name="aiModel" value="deepseek" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
+                        <label for="modelDeepseek" class="ml-2 block text-sm text-gray-900">DeepSeek</label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="geminiApiKeySection" class="mt-4 p-3 bg-white border border-gray-200 rounded-md">
+                <label for="geminiApiKeyInput" class="block text-xs font-medium text-indigo-700 mb-1">Gemini API Key:</label>
+                <div class="flex items-center space-x-2">
+                    <input type="password" id="geminiApiKeyInput" class="flex-grow p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="请输入 Gemini API Key">
+                    <button id="saveGeminiApiKeyButton" class="px-3 py-1.5 bg-indigo-500 text-white text-xs rounded-md hover:bg-indigo-600">保存Gemini密钥</button>
+                    <button id="clearGeminiApiKeyButton" class="px-3 py-1.5 bg-red-500 text-white text-xs rounded-md hover:bg-red-600">清除Gemini密钥</button>
+                </div>
+                <p id="geminiApiKeyMessage" class="text-xs text-gray-500 mt-1"></p>
+            </div>
+
+            <div id="deepseekApiKeySection" class="mt-3 p-3 bg-white border border-gray-200 rounded-md">
+                <label for="deepseekApiKeyInput" class="block text-xs font-medium text-teal-700 mb-1">DeepSeek API Key:</label>
+                <div class="flex items-center space-x-2">
+                    <input type="password" id="deepseekApiKeyInput" class="flex-grow p-2 border border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 sm:text-sm" placeholder="请输入 DeepSeek API Key">
+                    <button id="saveDeepseekApiKeyButton" class="px-3 py-1.5 bg-teal-500 text-white text-xs rounded-md hover:bg-teal-600">保存DeepSeek密钥</button>
+                    <button id="clearDeepseekApiKeyButton" class="px-3 py-1.5 bg-red-500 text-white text-xs rounded-md hover:bg-red-600">清除DeepSeek密钥</button>
+                </div>
+                <p id="deepseekApiKeyMessage" class="text-xs text-gray-500 mt-1"></p>
+            </div>
+             <p class="text-xs text-gray-500 mt-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 1 1 0 000-2zM6 8a1 1 0 11-2 0 1 1 0 012 0zm1 1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" />
+                </svg>
+                API密钥将安全地存储在您的浏览器本地存储中，仅用于与所选AI模型API通信。
+            </p>
+        </div>
+
+        <div id="knowledgeBaseSection" class="p-4 my-6 bg-gray-50 border border-gray-200 rounded-lg shadow-sm max-w-2xl mx-auto">
+            <h2 class="text-xl font-semibold text-center text-gray-700 mb-4">知识库管理 (Knowledge Base)</h2>
+
+            <div class="flex items-center space-x-2 mb-3 justify-center">
+                <input type="file" id="kbFile" accept=".json" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <button id="loadKbButton" class="control-btn bg-blue-500 text-white hover:bg-blue-600 px-3 py-1.5 rounded-md">加载知识库</button>
+                <button id="clearKbButton" class="control-btn bg-red-500 text-white hover:bg-red-600 px-3 py-1.5 rounded-md">清除知识库</button>
+            </div>
+            <p id="kbMessage" class="text-sm text-gray-600 mt-2 h-4 text-center"></p>
+
+            <div id="kbDocumentListContainer" class="mt-4">
+                <h3 class="text-md font-semibold text-gray-700 mb-2">已加载文档 (Loaded Documents):</h3>
+                <div id="kbDocumentList" class="max-h-40 overflow-y-auto border border-gray-200 rounded-md p-2 bg-white">
+                    <!-- Document titles will be listed here -->
+                    <p class="text-xs text-gray-400 italic">尚未加载知识库。</p>
+                </div>
+            </div>
+            <div class="mt-3 text-sm">
+                <strong>当前激活上下文 (Active Context):</strong>
+                <span id="activeKbDocDisplay" class="text-indigo-600 font-semibold">无 (None)</span>
+            </div>
+            <div class="mt-4 pt-4 border-t border-gray-200">
+                <h3 class="text-md font-semibold text-gray-700 mb-2">查询知识库 (Query Knowledge Base):</h3>
+                <div class="flex items-center gap-2 p-1 border border-gray-300 rounded-lg focus-within:border-indigo-500">
+                    <input type="search" id="kbSearchInput" placeholder="向已加载的知识库提问..." class="w-full px-3 py-1.5 text-gray-700 bg-transparent focus:outline-none sm:text-sm">
+                    <button id="kbSearchButton" class="bg-indigo-600 text-white rounded-md p-2 hover:bg-indigo-700 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">地表水自动监测技术规范</h1>
+        <p id="pageSubtitle" class="text-lg text-center text-gray-500 mb-8">(HJ 915-2017) 交互式思维导图 - Gemini 增强版</p>
+
+        <div class="mb-8 max-w-2xl mx-auto">
+            <form id="aiSearchForm" class="flex items-center gap-2 p-2 border-2 border-indigo-200 rounded-full shadow-lg focus-within:border-indigo-500 transition-all">
+                <input type="search" id="aiSearchInput" placeholder="✨ 就规范内容提问，让Gemini为您解答..." class="w-full px-4 py-2 text-gray-700 bg-transparent focus:outline-none">
+                <button type="submit" class="bg-indigo-600 text-white rounded-full p-2.5 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        <div class="controls space-x-4">
+            <button id="expandAll" class="control-btn">全部展开</button>
+            <button id="collapseAll" class="control-btn">全部折叠</button>
+        </div>
+
+        <div class="mt-4 flex items-center space-x-2 justify-center">
+            <input type="file" id="importFile" accept=".json" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <button id="importMapButton" class="control-btn bg-green-500 text-white hover:bg-green-600">导入思维导图</button>
+        </div>
+        <p id="importMessage" class="text-sm text-gray-600 mt-2 h-4 text-center"></p>
+
+        <ul class="tree"></ul>
+    </div>
+
+    <div id="aiModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center hidden z-50">
+        <div class="relative mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-2xl bg-white">
+            <h3 id="modalTitle" class="text-xl font-bold text-gray-800 mb-4"></h3>
+            <div id="modalContent" class="modal-content text-gray-700 max-h-[60vh] overflow-y-auto pr-2"></div>
+            <div id="modalActions" class="mt-4 text-right flex flex-wrap justify-end gap-2"></div>
+            <button id="closeModal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl font-bold">&times;</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let selectedAiModel = 'gemini';
+            let geminiApiKey = null;
+            let deepseekApiKey = null;
+
+            // DOM Elements for API Management
+            const modelGeminiRadio = document.getElementById('modelGemini');
+            const modelDeepseekRadio = document.getElementById('modelDeepseek');
+
+            const geminiApiKeyInput = document.getElementById('geminiApiKeyInput');
+            const saveGeminiApiKeyButton = document.getElementById('saveGeminiApiKeyButton');
+            const clearGeminiApiKeyButton = document.getElementById('clearGeminiApiKeyButton');
+            const geminiApiKeyMessage = document.getElementById('geminiApiKeyMessage');
+
+            const deepseekApiKeyInput = document.getElementById('deepseekApiKeyInput');
+            const saveDeepseekApiKeyButton = document.getElementById('saveDeepseekApiKeyButton');
+            const clearDeepseekApiKeyButton = document.getElementById('clearDeepseekApiKeyButton');
+            const deepseekApiKeyMessage = document.getElementById('deepseekApiKeyMessage');
+
+            const pageTitleElement = document.querySelector('title');
+            const pageSubtitleElement = document.getElementById('pageSubtitle');
+            const aiSearchInputElement = document.getElementById('aiSearchInput');
+
+            const importFileElement = document.getElementById('importFile');
+            const importMapButtonElement = document.getElementById('importMapButton');
+            const importMessageElement = document.getElementById('importMessage');
+
+            const kbFileElement = document.getElementById('kbFile');
+            const loadKbButtonElement = document.getElementById('loadKbButton');
+            const clearKbButtonElement = document.getElementById('clearKbButton');
+            const kbMessageElement = document.getElementById('kbMessage');
+            const kbDocumentListElement = document.getElementById('kbDocumentList');
+            let currentKnowledgeBase = null; // Variable to hold the parsed KB documents array
+            const KB_STORAGE_KEY = 'userKnowledgeBaseDocuments';
+            let activeKbDocIndex = -1; // -1 means no document is active
+            const ACTIVE_KB_DOC_DISPLAY_KEY = 'activeKbDocDisplay'; // For the display element
+
+            const kbSearchInputElement = document.getElementById('kbSearchInput');
+            const kbSearchButtonElement = document.getElementById('kbSearchButton');
+
+
+            function updateDynamicUIText() {
+                if (selectedAiModel === 'gemini') {
+                    pageTitleElement.textContent = '地表水自动监测技术规范 (HJ 915-2017) 交互式思维导图 (Gemini版)';
+                    pageSubtitleElement.textContent = '(HJ 915-2017) 交互式思维导图 - Gemini 增强版';
+                    aiSearchInputElement.placeholder = '✨ 就规范内容提问，让Gemini为您解答...';
+                } else if (selectedAiModel === 'deepseek') {
+                    pageTitleElement.textContent = '地表水自动监测技术规范 (HJ 915-2017) 交互式思维导图 (DeepSeek版)';
+                    pageSubtitleElement.textContent = '(HJ 915-2017) 交互式思维导图 - DeepSeek 增强版';
+                    aiSearchInputElement.placeholder = '✨ 就规范内容提问，让DeepSeek为您解答...';
+                }
+            }
+
+            function loadApiKeysAndModelSelection() {
+                // Load selected model
+                const savedModel = localStorage.getItem('selectedAiModel');
+                if (savedModel) {
+                    selectedAiModel = savedModel;
+                    if (selectedAiModel === 'gemini' && modelGeminiRadio) modelGeminiRadio.checked = true;
+                    else if (selectedAiModel === 'deepseek' && modelDeepseekRadio) modelDeepseekRadio.checked = true;
+                }
+                updateDynamicUIText(); // Update UI text based on loaded or default model
+
+                // Load Gemini Key
+                geminiApiKey = localStorage.getItem('geminiApiKey');
+                if (geminiApiKey) {
+                    if (geminiApiKeyMessage) geminiApiKeyMessage.textContent = 'Gemini API Key: 已加载。';
+                } else {
+                    if (geminiApiKeyMessage) geminiApiKeyMessage.textContent = 'Gemini API Key: 未设置。';
+                }
+                if (geminiApiKeyInput) geminiApiKeyInput.value = '';
+
+                // Load DeepSeek Key
+                deepseekApiKey = localStorage.getItem('deepseekApiKey');
+                if (deepseekApiKey) {
+                    if (deepseekApiKeyMessage) deepseekApiKeyMessage.textContent = 'DeepSeek API Key: 已加载。';
+                } else {
+                    if (deepseekApiKeyMessage) deepseekApiKeyMessage.textContent = 'DeepSeek API Key: 未设置。';
+                }
+                if (deepseekApiKeyInput) deepseekApiKeyInput.value = '';
+            }
+
+            // Model Selection Logic
+            [modelGeminiRadio, modelDeepseekRadio].forEach(radio => {
+                if(radio) radio.addEventListener('change', (event) => {
+                    if (event.target.checked) {
+                        selectedAiModel = event.target.value;
+                        localStorage.setItem('selectedAiModel', selectedAiModel);
+                        updateDynamicUIText();
+                        // Optionally, clear API status messages for the other model or update emphasis
+                        geminiApiKeyMessage.textContent = geminiApiKey ? 'Gemini API Key: 已加载。' : 'Gemini API Key: 未设置。';
+                        deepseekApiKeyMessage.textContent = deepseekApiKey ? 'DeepSeek API Key: 已加载。' : 'DeepSeek API Key: 未设置。';
+                    }
+                });
+            });
+
+            // Gemini API Key Management
+            if(saveGeminiApiKeyButton) saveGeminiApiKeyButton.addEventListener('click', () => {
+                const key = geminiApiKeyInput.value.trim();
+                if (key) {
+                    localStorage.setItem('geminiApiKey', key);
+                    geminiApiKey = key;
+                    geminiApiKeyMessage.textContent = 'Gemini API Key 已保存!';
+                    geminiApiKeyMessage.className = 'text-xs text-green-600 mt-1';
+                } else {
+                    geminiApiKeyMessage.textContent = '请输入有效的Gemini API Key。';
+                    geminiApiKeyMessage.className = 'text-xs text-red-600 mt-1';
+                }
+                setTimeout(() => {
+                    geminiApiKeyMessage.textContent = geminiApiKey ? 'Gemini API Key: 已加载。' : 'Gemini API Key: 未设置。';
+                    geminiApiKeyMessage.className = 'text-xs text-gray-500 mt-1'; // Reset class
+                }, 3000);
+            });
+
+            if(clearGeminiApiKeyButton) clearGeminiApiKeyButton.addEventListener('click', () => {
+                localStorage.removeItem('geminiApiKey');
+                geminiApiKey = null;
+                geminiApiKeyInput.value = '';
+                geminiApiKeyMessage.textContent = 'Gemini API Key: 未设置。';
+                geminiApiKeyMessage.className = 'text-xs text-orange-600 mt-1';
+            });
+
+            // DeepSeek API Key Management
+            if(saveDeepseekApiKeyButton) saveDeepseekApiKeyButton.addEventListener('click', () => {
+                const key = deepseekApiKeyInput.value.trim();
+                if (key) {
+                    localStorage.setItem('deepseekApiKey', key);
+                    deepseekApiKey = key;
+                    deepseekApiKeyMessage.textContent = 'DeepSeek API Key 已保存!';
+                    deepseekApiKeyMessage.className = 'text-xs text-green-600 mt-1';
+                } else {
+                    deepseekApiKeyMessage.textContent = '请输入有效的DeepSeek API Key。';
+                    deepseekApiKeyMessage.className = 'text-xs text-red-600 mt-1';
+                }
+                setTimeout(() => {
+                    deepseekApiKeyMessage.textContent = deepseekApiKey ? 'DeepSeek API Key: 已加载。' : 'DeepSeek API Key: 未设置。';
+                    deepseekApiKeyMessage.className = 'text-xs text-gray-500 mt-1'; // Reset class
+                }, 3000);
+            });
+
+            if(clearDeepseekApiKeyButton) clearDeepseekApiKeyButton.addEventListener('click', () => {
+                localStorage.removeItem('deepseekApiKey');
+                deepseekApiKey = null;
+                deepseekApiKeyInput.value = '';
+                deepseekApiKeyMessage.textContent = 'DeepSeek API Key: 未设置。';
+                deepseekApiKeyMessage.className = 'text-xs text-orange-600 mt-1';
+            });
+
+            loadApiKeysAndModelSelection(); // Initial load
+
+            function isValidKbJsonStructure(jsonData) {
+                if (!jsonData || typeof jsonData !== 'object' || !jsonData.knowledgeBase) {
+                    return false;
+                }
+                const kb = jsonData.knowledgeBase;
+                if (typeof kb !== 'object' || !Array.isArray(kb.documents)) {
+                    return false;
+                }
+                for (const doc of kb.documents) {
+                    if (typeof doc !== 'object' || typeof doc.title !== 'string' || typeof doc.content !== 'string') {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            function displayKbDocuments(documentsArray) {
+                if (!kbDocumentListElement) return;
+                const activeKbDocDisplayElement = document.getElementById(ACTIVE_KB_DOC_DISPLAY_KEY);
+                kbDocumentListElement.innerHTML = '';
+
+                if (!documentsArray || documentsArray.length === 0) {
+                    kbDocumentListElement.innerHTML = '<p class="text-xs text-gray-400 italic">尚未加载知识库或知识库为空。</p>';
+                    if (activeKbDocDisplayElement) activeKbDocDisplayElement.textContent = '无 (None)';
+                    activeKbDocIndex = -1; // Reset active index
+                    return;
+                }
+
+                const ul = document.createElement('ul');
+                documentsArray.forEach((doc, index) => {
+                    const li = document.createElement('li');
+                    li.textContent = doc.title;
+                    li.className = 'p-1 hover:bg-gray-100 cursor-pointer text-sm rounded';
+                    li.dataset.kbDocIndex = index;
+
+                    if (index === activeKbDocIndex) { // Persist visual selection if index matches
+                        li.classList.add('bg-indigo-100', 'font-semibold');
+                    }
+
+                    li.addEventListener('click', () => {
+                        // Remove active class from previously selected item
+                        const currentlyActiveLi = kbDocumentListElement.querySelector('li.bg-indigo-100');
+                        if (currentlyActiveLi) {
+                            currentlyActiveLi.classList.remove('bg-indigo-100', 'font-semibold');
+                        }
+
+                        // Set new active item
+                        if (activeKbDocIndex === index) { // Clicked already active item: deselect
+                            activeKbDocIndex = -1;
+                            if (activeKbDocDisplayElement) activeKbDocDisplayElement.textContent = '无 (None)';
+                        } else {
+                            activeKbDocIndex = index;
+                            li.classList.add('bg-indigo-100', 'font-semibold');
+                            if (activeKbDocDisplayElement) activeKbDocDisplayElement.textContent = doc.title;
+                        }
+                        console.log("Active KB Doc Index:", activeKbDocIndex);
+                    });
+                    ul.appendChild(li);
+                });
+                kbDocumentListElement.appendChild(ul);
+
+                // Update active display based on current activeKbDocIndex (e.g. after KB load)
+                if (activeKbDocDisplayElement) {
+                    if (activeKbDocIndex !== -1 && documentsArray[activeKbDocIndex]) {
+                        activeKbDocDisplayElement.textContent = documentsArray[activeKbDocIndex].title;
+                    } else {
+                        activeKbDocDisplayElement.textContent = '无 (None)';
+                    }
+                }
+            }
+
+            if (loadKbButtonElement) {
+                loadKbButtonElement.addEventListener('click', () => {
+                    if (!kbFileElement || !kbFileElement.files || kbFileElement.files.length === 0) {
+                        if (kbMessageElement) kbMessageElement.textContent = '请先选择一个知识库JSON文件。';
+                        return;
+                    }
+                    const file = kbFileElement.files[0];
+                    if (file.type !== 'application/json') {
+                        if (kbMessageElement) kbMessageElement.textContent = '请选择一个有效的JSON文件 (.json)。';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        try {
+                            const parsedJson = JSON.parse(event.target.result);
+                            if (isValidKbJsonStructure(parsedJson)) {
+                                // Check size (approximate for stringified version)
+                                if (event.target.result.length > 10 * 1024 * 1024) { // 10MB
+                                     if (kbMessageElement) kbMessageElement.textContent = '错误：知识库文件超过10MB限制。';
+                                     return;
+                                }
+                                currentKnowledgeBase = parsedJson.knowledgeBase.documents;
+                                localStorage.setItem(KB_STORAGE_KEY, JSON.stringify(currentKnowledgeBase));
+                                displayKbDocuments(currentKnowledgeBase);
+                                if (kbMessageElement) kbMessageElement.textContent = '知识库加载并验证成功！';
+                                kbFileElement.value = ''; // Clear file input
+                            } else {
+                                if (kbMessageElement) kbMessageElement.textContent = '错误：知识库JSON结构无效。';
+                            }
+                        } catch (error) {
+                            if (kbMessageElement) kbMessageElement.textContent = '错误：无法解析JSON文件。';
+                            console.error("KB JSON parsing error:", error);
+                        }
+                    };
+                    reader.onerror = () => {
+                        if (kbMessageElement) kbMessageElement.textContent = '读取文件时发生错误。';
+                    };
+                    reader.readAsText(file);
+                    if (kbMessageElement) kbMessageElement.textContent = '正在加载知识库...';
+                });
+            }
+
+            if (clearKbButtonElement) {
+                clearKbButtonElement.addEventListener('click', () => {
+                    localStorage.removeItem(KB_STORAGE_KEY);
+                    currentKnowledgeBase = null;
+                    activeKbDocIndex = -1;
+                    displayKbDocuments(null);
+                    if (kbMessageElement) kbMessageElement.textContent = '知识库已清除。';
+                    // The activeKbDocDisplay is reset within displayKbDocuments(null)
+                });
+            }
+
+            function loadKbFromStorage() {
+                const storedKb = localStorage.getItem(KB_STORAGE_KEY);
+                if (storedKb) {
+                    try {
+                        currentKnowledgeBase = JSON.parse(storedKb);
+                        displayKbDocuments(currentKnowledgeBase);
+                        if (kbMessageElement) kbMessageElement.textContent = '已从本地存储加载知识库。';
+                    } catch (error) {
+                        console.error("Error loading KB from localStorage:", error);
+                        localStorage.removeItem(KB_STORAGE_KEY); // Clear corrupted data
+                    }
+                }
+            }
+            loadKbFromStorage();
+
+            if (kbSearchButtonElement) {
+                kbSearchButtonElement.addEventListener('click', () => {
+                    const userQuery = kbSearchInputElement.value.trim();
+                    if (!userQuery) {
+                        if (kbMessageElement) kbMessageElement.textContent = '请输入您想在知识库中查询的问题。';
+                        return;
+                    }
+                    if (!currentKnowledgeBase || currentKnowledgeBase.length === 0) {
+                        if (kbMessageElement) kbMessageElement.textContent = '请先加载知识库，再进行查询。';
+                        return;
+                    }
+
+                    let allKbDocsContent = "";
+                    currentKnowledgeBase.forEach(doc => {
+                        allKbDocsContent += `文档标题 (Document Title): ${doc.title}\n内容 (Content):\n${doc.content}\n\n---\n\n`;
+                    });
+
+                    // Consider token limits here. For now, concatenate all.
+                    // A more advanced approach might involve choosing relevant docs or summarizing.
+                    if (allKbDocsContent.length > 25000) { // Arbitrary limit for prompt safety, adjust as needed
+                        allKbDocsContent = allKbDocsContent.substring(0, 25000) + "... [内容过长已截断]";
+                         if (kbMessageElement) kbMessageElement.textContent = '警告：知识库内容过长，已截断部分内容以进行查询。';
+                    }
+
+                    const kbQueryPrompt = `请仅根据以下提供的文档内容来回答问题。
+
+问题 (Question): "${userQuery}"
+
+文档内容 (Documents Content):
+"""
+${allKbDocsContent}
+"""
+
+请直接回答问题，不要解释你将如何回答，也不要提及“根据提供的文档”这类措辞，除非问题本身是关于文档的。`;
+
+                    // Use the existing modal display logic
+                    openModalWithContent(`知识库查询结果 (Knowledge Base Query for: "${userQuery}")`, callAIModel(kbQueryPrompt));
+
+                    // Optionally clear the input
+                    // kbSearchInputElement.value = '';
+                });
+            }
+
+            function isValidMindmapData(data) {
+                if (!data || typeof data !== 'object') return false;
+                if (typeof data.text !== 'string') return false;
+                // Check for root children (optional, a mindmap could be a single node)
+                if (data.children && !Array.isArray(data.children)) return false;
+
+                // Optional: Basic check on children structure if they exist
+                if (data.children) {
+                    for (const child of data.children) {
+                        if (!child || typeof child !== 'object' || typeof child.text !== 'string') {
+                            // Deeper validation could recursively call isValidMindmapData(child)
+                            return false;
+                        }
+                        // Further checks: if child.children exists, it must be an array, etc.
+                        if (child.children && !Array.isArray(child.children)) return false;
+                    }
+                }
+                return true;
+            }
+
+            if (importMapButtonElement) {
+                importMapButtonElement.addEventListener('click', () => {
+                    if (!importFileElement || !importFileElement.files || importFileElement.files.length === 0) {
+                        if (importMessageElement) importMessageElement.textContent = '请先选择一个JSON文件。';
+                        return;
+                    }
+
+                    const file = importFileElement.files[0];
+                    if (file.type !== 'application/json') {
+                        if (importMessageElement) importMessageElement.textContent = '请选择一个有效的JSON文件 (.json)。';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+
+                    reader.onload = (event) => {
+                        const fileContent = event.target.result;
+                        if (importMessageElement) importMessageElement.textContent = '文件读取成功！正在解析和验证...';
+
+                        try {
+                            const importedData = JSON.parse(fileContent);
+
+                            if (isValidMindmapData(importedData)) {
+                                mindmapData = importedData; // Reassign mindmapData with the new validated data
+
+                                // Clear the existing tree
+                                const treeContainer = document.querySelector('.tree');
+                                if (treeContainer) {
+                                    treeContainer.innerHTML = ''; // Clear previous mind map
+                                    treeContainer.appendChild(createTree(mindmapData)); // Create and append the new tree
+
+                                    // Optional: Collapse all nodes except root or expand all after import
+                                    const collapseAllBtn = document.getElementById('collapseAll');
+                                    if (collapseAllBtn) {
+                                        collapseAllBtn.click(); // Collapse all
+                                        const rootNode = treeContainer.querySelector('li.root');
+                                        if (rootNode) { // Ensure root is expanded
+                                            rootNode.classList.remove('collapsed');
+                                            const rootToggleIcon = rootNode.querySelector('.toggle-icon');
+                                            if(rootToggleIcon) rootToggleIcon.textContent = '−';
+                                        }
+                                    }
+
+                                    if (importMessageElement) {
+                                        importMessageElement.textContent = '思维导图已成功导入并更新！';
+                                        setTimeout(() => { if(importMessageElement) importMessageElement.textContent = ''; }, 5000); // Clear message after 5s
+                                    }
+                                    console.log("Mind map updated with imported data.");
+
+                                } else {
+                                    if (importMessageElement) importMessageElement.textContent = '错误：无法找到思维导图容器。';
+                                    console.error("Tree container .tree not found.");
+                                }
+                            } else {
+                                if (importMessageElement) importMessageElement.textContent = '错误：文件内容不是有效的思维导图格式。';
+                                console.error("Invalid mind map data structure:", importedData);
+                            }
+                        } catch (error) {
+                            if (importMessageElement) importMessageElement.textContent = '错误：无法解析JSON文件。请确保文件格式正确。';
+                            console.error("JSON parsing error:", error);
+                        }
+                    };
+
+                    reader.onerror = (event) => {
+                        if (importMessageElement) importMessageElement.textContent = '读取文件时发生错误。';
+                        console.error("FileReader error:", event.target.error);
+                    };
+
+                    reader.readAsText(file);
+                    if (importMessageElement) importMessageElement.textContent = '正在读取文件...';
+                });
+            }
+
+            let mindmapData = { /* ... Mindmap data remains the same as previous version ... */
+                text: "地表水自动监测技术规范 (HJ 915-2017)",
+                isRoot: true,
+                children: [
+                    { text: "一、 引言与范围", children: [{ text: "目的" }, { text: "法律依据" }, { text: "适用范围" }, { text: "规范性引用" }] },
+                    {
+                        text: "二、 核心术语定义",
+                        children: [
+                            { text: "地表水水质自动监测" },
+                            { text: "水站" },
+                            { text: "数据平台" },
+                            { text: "自动监测系统" },
+                            {
+                                text: "常规五参数",
+                                quiz: [
+                                    { question: "地表水自动监测中的“常规五参数”通常不包括以下哪一项？", choices: ["水温", "pH值", "溶解氧", "总氮"], correctAnswer: "总氮" },
+                                    { question: "测量pH值的意义在于反映水体的什么特性？", choices: ["混浊程度", "酸碱度", "含氧量", "导电能力"], correctAnswer: "酸碱度" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        text: "三、 系统建设",
+                        children: [
+                            { text: "总体要求" },
+                            { text: "站址选择", children: [{ text: "原则：可行性、代表性、长期性、安全性、经济性" }, { text: "基础条件：交通、电力(≥15kW)、水源、通讯等" }, { text: "代表性：远离污染源, 避免回水区" }] },
+                            {
+                                text: "站房建设",
+                                children: [
+                                    { text: "形式：固定式、简易式、浮标站等" },
+                                    { text: "安全要求：防雷、抗震、防洪、防盗等" },
+                                    { text: "固定站房配置：仪器间(≥60m²)、质控间(≥30m²)" },
+                                    {
+                                        text: "环境控制",
+                                        quiz: [
+                                            { question: "水站站房环境控制中，对温度的一般要求是多少摄氏度？", choices: ["0~10℃", "10~18℃", "18~28℃", "28~35℃"], correctAnswer: "18~28℃" },
+                                            { question: "水站站房环境控制中，对湿度的一般要求是什么？", choices: ["<40%", "<60%", ">60%", ">80%"], correctAnswer: "<60%" }
+                                        ]
+                                    }
+                                ]
+                            },
+                            { text: "水站各单元建设", children: [{ text: "采配水单元 (采水、预处理、配水)" }, { text: "控制单元 (PLC, MTBF≥10000h)" }, { text: "检测单元 (仪器性能需符合附录A.2)" }, { text: "数据采集与传输单元 (本地储存≥1年数据)" }] },
+                            { text: "数据平台建设", children: [{ text: "核心功能：数据采集、远程反控、分析管理、报警" }, { text: "技术要求：安全传输、可扩展、自动识别无效数据" }] },
+                        ]
+                    },
+                    { text: "四、 系统验收", special: true, children: [{ text: "总体要求" }, { text: "验收程序" }, { text: "基本条件 (至少连续稳定运行30天)" }, { text: "详细内容 (站房、仪器、数据平台)" }] },
+                    { text: "五、 运行维护 (O&M)", special: true, children: [{ text: "总体要求" }, { text: "例行维护 (巡检频次 ≥ 每周一次)" }, { text: "保养检修 (每年至少1次)" }, { text: "故障检修", simulatable: true }, { text: "数据平台管理" }, { text: "记录要求" }] },
+                    { text: "六、 质量保证与质量控制 (QA/QC)", children: [ { text: "量值传递要求 (使用有证标准样品)" }, { text: "仪器性能核查", children: [{ text: "内容：准确度、精密度、检出限等" }, { text: "频率：大部分指标≥每半年一次，校准≥每月一次" }, { text: "方法与公式" }, { text: "实际水样比对" }] } ] },
+                    { text: "七、 数据采集与有效性", simulatable: true, children: [ { text: "采集频率", quiz: [ { question: "《HJ 915-2017》规范中，地表水自动监测系统一般的数据采集频率是多少？", choices: ["每15分钟一次", "每小时一次", "每2小时一次", "每4小时一次"], correctAnswer: "每4小时一次" } ] }, { text: "数据有效性 (存疑数据24h内甄别)" }, { text: "数据有效率 (>90%)" } ] },
+                    { text: "八、 保障制度", children: [{ text: "运行管理办法" }, { text: "岗位职责" }, { text: "质量管理保障制度" }, { text: "仪器操作规程 (SOPs)" }, { text: "培训及考核制度" }, { text: "档案管理制度" }] },
+                    { text: "九、 监测项目与仪器性能", children: [ { text: "监测项目", children: [{ text: "河流必测：常规五参数、高锰酸盐指数、氨氮、总磷、总氮" }, { text: "湖库必测：增加叶绿素a" }, { text: "选测项目" }] }, { text: "仪器性能要求 (附录A.2)", children: [{ text: "规范性附录，具强制性" }, { text: "规定具体技术指标 (检出限、精密度等)" }, { text: "提供量化基准" }] } ] }
+                ]
+            };
+
+            const treeContainer = document.querySelector('.tree');
+            treeContainer.innerHTML = '';
+            treeContainer.appendChild(createTree(mindmapData));
+
+            function createTree(nodeData) {
+                const li = document.createElement('li');
+                const span = document.createElement('span');
+                span.className = 'node';
+                span.textContent = nodeData.text;
+                if (nodeData.isRoot) li.classList.add('root');
+                if (nodeData.children && nodeData.children.length > 0) {
+                    li.classList.add('has-children');
+                    const toggleIcon = document.createElement('span');
+                    toggleIcon.className = 'toggle-icon';
+                    toggleIcon.textContent = '−';
+                    span.prepend(toggleIcon);
+                    const ul = document.createElement('ul');
+                    nodeData.children.forEach(child => ul.appendChild(createTree(child)));
+                    li.appendChild(span);
+                    li.appendChild(ul);
+                } else {
+                    li.appendChild(span);
+                }
+                if (!nodeData.isRoot) {
+                    const aiTrigger = document.createElement('span');
+                    aiTrigger.className = 'ai-trigger';
+                    aiTrigger.title = '✨ 智能解读';
+                    aiTrigger.innerHTML = '✨';
+                    span.appendChild(aiTrigger);
+                    aiTrigger.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openAIModalForNode(nodeData, nodeData.text, nodeData.special);
+                    });
+                    if (nodeData.simulatable) {
+                        const simTrigger = document.createElement('span');
+                        simTrigger.className = 'simulation-trigger';
+                        simTrigger.title = '🧠 AI场景模拟';
+                        simTrigger.innerHTML = '🧠';
+                        span.appendChild(simTrigger);
+                        simTrigger.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            openSimulationModal(nodeData.text);
+                        });
+                    }
+                }
+                return li;
+            }
+
+            const tree = document.querySelector('.tree');
+            if(tree) tree.addEventListener('click', function (event) { /* ... tree click logic ... */
+                const target = event.target;
+                if (target.matches('.node, .toggle-icon')) {
+                    const parentLi = target.closest('li.has-children');
+                    if (parentLi) {
+                        parentLi.classList.toggle('collapsed');
+                        const toggleIcon = parentLi.querySelector('.toggle-icon');
+                        if(toggleIcon) toggleIcon.textContent = parentLi.classList.contains('collapsed') ? '+' : '−';
+                    }
+                }
+            });
+
+            const expandAllBtn = document.getElementById('expandAll');
+            if(expandAllBtn) expandAllBtn.addEventListener('click', function() { /* ... expand all logic ... */
+                 tree.querySelectorAll('li.has-children').forEach(node => {
+                    node.classList.remove('collapsed');
+                    if(node.querySelector('.toggle-icon')) node.querySelector('.toggle-icon').textContent = '−';
+                });
+            });
+
+            const collapseAllBtn = document.getElementById('collapseAll');
+            if(collapseAllBtn) collapseAllBtn.addEventListener('click', function() { /* ... collapse all logic ... */
+                tree.querySelectorAll('li.has-children').forEach(node => {
+                    if (!node.classList.contains('root')) {
+                        node.classList.add('collapsed');
+                         if(node.querySelector('.toggle-icon')) node.querySelector('.toggle-icon').textContent = '+';
+                    }
+                });
+            });
+
+            if(collapseAllBtn) collapseAllBtn.click();
+            const rootNode = document.querySelector('.tree > li.root');
+            if(rootNode) rootNode.classList.remove('collapsed');
+
+
+            const modal = document.getElementById('aiModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalContent = document.getElementById('modalContent');
+            const modalActions = document.getElementById('modalActions');
+            const closeModalBtn = document.getElementById('closeModal');
+
+            if(closeModalBtn) closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
+            if(modal) modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+
+            async function callAIModel(prompt) {
+                const modelToUse = selectedAiModel;
+                let apiKeyToUse = null;
+                let apiUrl = '';
+                let payload = {};
+                let headers = {};
+                let modelNameForError = '';
+
+                if (modelToUse === 'gemini') {
+                    apiKeyToUse = geminiApiKey;
+                    modelNameForError = 'Gemini';
+                    if (!apiKeyToUse) {
+                        modalTitle.textContent = "Gemini API Key 未设置";
+                        modalContent.innerHTML = '<p class="text-red-500 font-semibold">错误：Gemini API Key 未设置。</p><p>请在页面顶部的Gemini API Key输入框中设置您的密钥，然后重试。</p>';
+                        if (modalActions) modalActions.innerHTML = '';
+                        if (modal && modal.classList.contains('hidden')) modal.classList.remove('hidden');
+                        return Promise.reject("Gemini API Key未设置");
+                    }
+                    apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKeyToUse}`;
+                    payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+                    headers = { 'Content-Type': 'application/json' };
+                } else if (modelToUse === 'deepseek') {
+                    apiKeyToUse = deepseekApiKey;
+                    modelNameForError = 'DeepSeek';
+                    if (!apiKeyToUse) {
+                        modalTitle.textContent = "DeepSeek API Key 未设置";
+                        modalContent.innerHTML = '<p class="text-red-500 font-semibold">错误：DeepSeek API Key 未设置。</p><p>请在页面顶部的DeepSeek API Key输入框中设置您的密钥，然后重试。</p>';
+                        if (modalActions) modalActions.innerHTML = '';
+                        if (modal && modal.classList.contains('hidden')) modal.classList.remove('hidden');
+                        return Promise.reject("DeepSeek API Key未设置");
+                    }
+                    apiUrl = "https://api.deepseek.com/v1/chat/completions";
+                    payload = { model: "deepseek-chat", messages: [{ role: "user", content: prompt }] };
+                    headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKeyToUse}` };
+                } else {
+                    modalTitle.textContent = "未选择AI模型";
+                    modalContent.innerHTML = '<p class="text-red-500 font-semibold">错误：未选择AI模型。</p><p>请在页面顶部选择一个AI模型，然后重试。</p>';
+                    if (modalActions) modalActions.innerHTML = '';
+                    if (modal && modal.classList.contains('hidden')) modal.classList.remove('hidden');
+                    return Promise.reject("未选择AI模型");
+                }
+
+                try {
+                    const response = await fetch(apiUrl, { method: 'POST', headers: headers, body: JSON.stringify(payload) });
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status} ${await response.text()}`);
+                    const result = await response.json();
+
+                    if (modelToUse === 'gemini') {
+                        if (result.candidates && result.candidates[0] && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                            return result.candidates[0].content.parts[0].text;
+                        } else { throw new Error(`${modelNameForError} API响应格式不正确。`); }
+                    } else if (modelToUse === 'deepseek') {
+                         if (result.choices && result.choices[0] && result.choices[0].message && result.choices[0].message.content) {
+                            return result.choices[0].message.content;
+                        } else { throw new Error(`${modelNameForError} API响应格式不正确。`); }
+                    }
+                } catch (error) {
+                    console.error(`${modelNameForError} API call failed:`, error);
+                    modalTitle.textContent = `${modelNameForError} AI 调用失败`;
+                    modalContent.innerHTML = `<p class="text-red-500">调用${modelNameForError} AI服务失败。</p><p class="text-sm mt-2">错误详情: ${error.message}</p><p class="text-sm mt-2">请检查您的网络连接、API密钥是否正确且有权访问${modelNameForError} API，或稍后再试。</p>`;
+                    return Promise.reject(error.message);
+                }
+            }
+
+            async function openModalWithContent(title, contentPromise) {
+                modal.classList.remove('hidden');
+                modalTitle.textContent = title;
+                modalContent.innerHTML = '<div class="flex justify-center items-center h-48"><div class="spinner"></div></div>';
+                modalActions.innerHTML = '';
+                try {
+                    const result = await contentPromise;
+                    modalContent.textContent = result;
+                } catch (error) {
+                    // Error display is now primarily handled within callAIModel
+                    // This catch is a fallback or for non-API related promise rejections
+                    if (!modalContent.textContent.includes("错误：") && !modalContent.textContent.includes("调用失败")) {
+                         modalContent.textContent = "加载内容时发生错误。";
+                    }
+                     console.log("Error in openModalWithContent:", error); // Log for debugging
+                }
+            }
+
+            let currentQuizDataSession = null;
+            let currentQuestionIndexSession = 0;
+            let scoreSession = 0;
+
+            function displayQuiz(quizData) { /* ... displayQuiz and related functions remain the same ... */
+                currentQuizDataSession = quizData;
+                currentQuestionIndexSession = 0;
+                scoreSession = 0;
+                modalTitle.textContent = "章节小测验";
+                renderCurrentQuestion();
+            }
+
+            function renderCurrentQuestion() { /* ... same ... */
+                const modalContentDiv = document.getElementById('modalContent');
+                const modalActionsDiv = document.getElementById('modalActions');
+                modalContentDiv.innerHTML = '';
+                modalActionsDiv.innerHTML = '';
+                if (!currentQuizDataSession || currentQuestionIndexSession >= currentQuizDataSession.length) {
+                    showQuizSummary(); return;
+                }
+                const questionData = currentQuizDataSession[currentQuestionIndexSession];
+                const questionElement = document.createElement('h4');
+                questionElement.className = 'text-lg font-semibold mb-3';
+                questionElement.textContent = `问题 ${currentQuestionIndexSession + 1}/${currentQuizDataSession.length}: ${questionData.question}`;
+                modalContentDiv.appendChild(questionElement);
+                const choicesContainer = document.createElement('div');
+                questionData.choices.forEach(choiceText => {
+                    const choiceButton = document.createElement('button');
+                    choiceButton.textContent = choiceText;
+                    choiceButton.className = 'choice-button';
+                    choiceButton.addEventListener('click', () => handleAnswer(choiceButton, choiceText, questionData));
+                    choicesContainer.appendChild(choiceButton);
+                });
+                modalContentDiv.appendChild(choicesContainer);
+            }
+
+            function handleAnswer(clickedButton, selectedChoice, questionData) { /* ... same ... */
+                const allChoiceButtons = clickedButton.parentElement.querySelectorAll('.choice-button');
+                allChoiceButtons.forEach(btn => btn.disabled = true);
+                if (selectedChoice === questionData.correctAnswer) {
+                    scoreSession++; clickedButton.classList.add('correct');
+                } else {
+                    clickedButton.classList.add('incorrect');
+                    allChoiceButtons.forEach(btn => { if (btn.textContent === questionData.correctAnswer) btn.classList.add('correct'); });
+                }
+                showNavigationButtons();
+            }
+
+            function showNavigationButtons() { /* ... same ... */
+                const modalActionsDiv = document.getElementById('modalActions');
+                modalActionsDiv.innerHTML = '';
+                if (currentQuestionIndexSession < currentQuizDataSession.length - 1) {
+                    const nextButton = document.createElement('button');
+                    nextButton.textContent = '下一题';
+                    nextButton.className = 'control-btn bg-indigo-500 text-white hover:bg-indigo-600';
+                    nextButton.addEventListener('click', () => { currentQuestionIndexSession++; renderCurrentQuestion(); });
+                    modalActionsDiv.appendChild(nextButton);
+                } else {
+                    const finishButton = document.createElement('button');
+                    finishButton.textContent = '完成测验';
+                    finishButton.className = 'control-btn bg-green-500 text-white hover:bg-green-600';
+                    finishButton.addEventListener('click', showQuizSummary);
+                    modalActionsDiv.appendChild(finishButton);
+                }
+            }
+            function showQuizSummary() { /* ... same ... */
+                const modalContentDiv = document.getElementById('modalContent');
+                const modalActionsDiv = document.getElementById('modalActions');
+                modalContentDiv.innerHTML = `<h3 class="text-xl font-bold text-center mb-4">测验完成!</h3><p class="text-center text-lg">你答对了 ${scoreSession} / ${currentQuizDataSession.length} 题。</p>`;
+                modalActionsDiv.innerHTML = '';
+                const closeButton = document.createElement('button');
+                closeButton.textContent = '关闭';
+                closeButton.className = 'control-btn';
+                closeButton.onclick = () => { modal.classList.add('hidden'); };
+                modalActionsDiv.appendChild(closeButton);
+            }
+
+            async function openAIModalForNode(nodeData, nodeText, isSpecial) { /* ... uses callAIModel ... */
+                let finalPrompt;
+                const basePromptExplain = `请根据《地表水自动监测技术规范 HJ 915-2017》的内容，用通俗易懂的语言详细解释'${nodeText}'这一节的核心内容和重要性。`;
+
+                if (activeKbDocIndex !== -1 && currentKnowledgeBase && currentKnowledgeBase[activeKbDocIndex] && currentKnowledgeBase[activeKbDocIndex].content) {
+                    const kbContextContent = currentKnowledgeBase[activeKbDocIndex].content;
+                    finalPrompt = `请参考以下背景知识：
+"""
+${kbContextContent}
+"""
+
+基于以上背景知识以及《地表水自动监测技术规范 HJ 915-2017》的整体内容，请用通俗易懂的语言详细解释 '${nodeText}' 这一节的核心内容和重要性。如果背景知识与规范内容有冲突，请以规范内容为准。`;
+                    console.log("Using KB context for prompt. Context length:", kbContextContent.length);
+                } else {
+                    finalPrompt = basePromptExplain;
+                }
+
+                try {
+                    await openModalWithContent(`关于“${nodeText}”的智能解读`, callAIModel(finalPrompt));
+                    const modalActionsDiv = document.getElementById('modalActions'); // Ensure it's freshly obtained
+                    // modalActionsDiv.innerHTML = ''; // openModalWithContent clears it.
+
+                    if (isSpecial) {
+                        const checklistBtn = document.createElement('button');
+                        checklistBtn.className = 'control-btn bg-blue-500 text-white hover:bg-blue-600';
+                        checklistBtn.innerHTML = '✨ 生成检查清单';
+                        checklistBtn.onclick = async () => {
+                             const checklistPromptBtn = `根据《地表水自动监测技术规范 HJ 915-2017》中关于'${nodeText}'的全部要求，生成一份详细、可操作的现场检查清单，请使用Markdown格式。`;
+                             openModalWithContent(`“${nodeText}”检查清单`, callAIModel(checklistPromptBtn));
+                        };
+                        modalActionsDiv.appendChild(checklistBtn);
+                    }
+                    if (nodeData.quiz && nodeData.quiz.length > 0) {
+                        const quizButton = document.createElement('button');
+                        quizButton.innerHTML = '📝 开始测验';
+                        quizButton.className = 'control-btn bg-purple-500 text-white hover:bg-purple-600';
+                        quizButton.addEventListener('click', () => displayQuiz(nodeData.quiz));
+                        modalActionsDiv.appendChild(quizButton);
+                    }
+                } catch (error) { console.log("Error handled by callAIModel/openModalWithContent in openAIModalForNode:", error); }
+            }
+
+            async function openSimulationModal(nodeText) { /* ... uses callAIModel ... */
+                const scenarioPrompt = `您是一名地表水自动监测站的运维培训专家。请根据《地表水自动监测技术规范 HJ 915-2017》关于'${nodeText}'的要求，设计一个常见的、具体的实践场景问题来挑战用户。请以场景描述和提问的方式呈现，引导用户思考如何应对。`;
+                try {
+                    await openModalWithContent(`关于“${nodeText}”的场景模拟`, callAIModel(scenarioPrompt).then(scenario => {
+                        if (scenario && !scenario.startsWith("调用") && !scenario.startsWith("错误：")) { // Check if scenario fetch was successful
+                            const modalActionsDiv = document.getElementById('modalActions');
+                            const solutionBtn = document.createElement('button');
+                            solutionBtn.className = 'control-btn bg-green-500 text-white hover:bg-green-600';
+                            solutionBtn.innerHTML = '查看解决方案';
+                            solutionBtn.onclick = async () => {
+                                const solutionPrompt = `针对以下场景问题：“${modalContent.textContent}”。请根据《地表水自动监测技术规范 HJ 915-2017》的要求，提供一份标准、详细的解决方案和处理流程。`;
+                                openModalWithContent(`“${nodeText}”场景解决方案`, callAIModel(solutionPrompt));
+                            };
+                            modalActionsDiv.appendChild(solutionBtn);
+                        } // else: error already displayed by callAIModel
+                        return scenario;
+                    }));
+                } catch (error) { console.log("Error handled by callAIModel/openModalWithContent in openSimulationModal:", error); }
+            }
+
+            const searchForm = document.getElementById('aiSearchForm');
+            const searchInput = document.getElementById('aiSearchInput');
+            if(searchForm) searchForm.addEventListener('submit', async (e) => { /* ... uses callAIModel ... */
+                e.preventDefault();
+                const query = searchInput.value.trim();
+                if (!query) return;
+                const prompt = `您是一位熟悉《地表水自动监测技术规范 HJ 915-2017》的专家。请根据该规范的详细内容，回答以下问题：“${query}”。请确保您的回答准确、详细，并尽可能引用规范中的关键点。`;
+                openModalWithContent(`关于“${query}”的解答`, callAIModel(prompt));
+                searchInput.value = '';
+            });
+        });
+    </script>
+</body>
+</html>
