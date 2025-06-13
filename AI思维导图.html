@@ -112,6 +112,12 @@
             <button id="collapseAll" class="control-btn">全部折叠</button>
         </div>
 
+        <div class="mt-4 flex items-center space-x-2 justify-center">
+            <input type="file" id="importFile" accept=".json" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <button id="importMapButton" class="control-btn bg-green-500 text-white hover:bg-green-600">导入思维导图</button>
+        </div>
+        <p id="importMessage" class="text-sm text-gray-600 mt-2 h-4 text-center"></p> 
+
         <ul class="tree"></ul>
     </div>
 
@@ -147,6 +153,10 @@
             const pageTitleElement = document.querySelector('title');
             const pageSubtitleElement = document.getElementById('pageSubtitle');
             const aiSearchInputElement = document.getElementById('aiSearchInput');
+
+            const importFileElement = document.getElementById('importFile');
+            const importMapButtonElement = document.getElementById('importMapButton');
+            const importMessageElement = document.getElementById('importMessage');
 
 
             function updateDynamicUIText() {
@@ -258,7 +268,100 @@
             
             loadApiKeysAndModelSelection(); // Initial load
 
-            const mindmapData = { /* ... Mindmap data remains the same as previous version ... */ 
+            function isValidMindmapData(data) {
+                if (!data || typeof data !== 'object') return false;
+                if (typeof data.text !== 'string') return false;
+                // Check for root children (optional, a mindmap could be a single node)
+                if (data.children && !Array.isArray(data.children)) return false;
+
+                // Optional: Basic check on children structure if they exist
+                if (data.children) {
+                    for (const child of data.children) {
+                        if (!child || typeof child !== 'object' || typeof child.text !== 'string') {
+                            // Deeper validation could recursively call isValidMindmapData(child)
+                            return false; 
+                        }
+                        // Further checks: if child.children exists, it must be an array, etc.
+                        if (child.children && !Array.isArray(child.children)) return false;
+                    }
+                }
+                return true;
+            }
+
+            if (importMapButtonElement) {
+                importMapButtonElement.addEventListener('click', () => {
+                    if (!importFileElement || !importFileElement.files || importFileElement.files.length === 0) {
+                        if (importMessageElement) importMessageElement.textContent = '请先选择一个JSON文件。';
+                        return;
+                    }
+
+                    const file = importFileElement.files[0];
+                    if (file.type !== 'application/json') {
+                        if (importMessageElement) importMessageElement.textContent = '请选择一个有效的JSON文件 (.json)。';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+
+                    reader.onload = (event) => {
+                        const fileContent = event.target.result;
+                        if (importMessageElement) importMessageElement.textContent = '文件读取成功！正在解析和验证...';
+
+                        try {
+                            const importedData = JSON.parse(fileContent);
+
+                            if (isValidMindmapData(importedData)) {
+                                mindmapData = importedData; // Reassign mindmapData with the new validated data
+
+                                // Clear the existing tree
+                                const treeContainer = document.querySelector('.tree');
+                                if (treeContainer) {
+                                    treeContainer.innerHTML = ''; // Clear previous mind map
+                                    treeContainer.appendChild(createTree(mindmapData)); // Create and append the new tree
+
+                                    // Optional: Collapse all nodes except root or expand all after import
+                                    const collapseAllBtn = document.getElementById('collapseAll');
+                                    if (collapseAllBtn) {
+                                        collapseAllBtn.click(); // Collapse all
+                                        const rootNode = treeContainer.querySelector('li.root');
+                                        if (rootNode) { // Ensure root is expanded
+                                            rootNode.classList.remove('collapsed');
+                                            const rootToggleIcon = rootNode.querySelector('.toggle-icon');
+                                            if(rootToggleIcon) rootToggleIcon.textContent = '−';
+                                        }
+                                    }
+                                    
+                                    if (importMessageElement) {
+                                        importMessageElement.textContent = '思维导图已成功导入并更新！';
+                                        setTimeout(() => { if(importMessageElement) importMessageElement.textContent = ''; }, 5000); // Clear message after 5s
+                                    }
+                                    console.log("Mind map updated with imported data.");
+
+                                } else {
+                                    if (importMessageElement) importMessageElement.textContent = '错误：无法找到思维导图容器。';
+                                    console.error("Tree container .tree not found.");
+                                }
+                            } else {
+                                if (importMessageElement) importMessageElement.textContent = '错误：文件内容不是有效的思维导图格式。';
+                                console.error("Invalid mind map data structure:", importedData);
+                            }
+                        } catch (error) {
+                            if (importMessageElement) importMessageElement.textContent = '错误：无法解析JSON文件。请确保文件格式正确。';
+                            console.error("JSON parsing error:", error);
+                        }
+                    };
+
+                    reader.onerror = (event) => {
+                        if (importMessageElement) importMessageElement.textContent = '读取文件时发生错误。';
+                        console.error("FileReader error:", event.target.error);
+                    };
+
+                    reader.readAsText(file);
+                    if (importMessageElement) importMessageElement.textContent = '正在读取文件...';
+                });
+            }
+
+            let mindmapData = { /* ... Mindmap data remains the same as previous version ... */ 
                 text: "地表水自动监测技术规范 (HJ 915-2017)",
                 isRoot: true,
                 children: [
